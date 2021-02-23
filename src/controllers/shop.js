@@ -2,6 +2,8 @@ const { Router } = require("express");
 const bodyParser = require('body-parser');
 const ShopService = require("../services/shop");
 const { createShopFormSchema } = require('../moulds/ShopForm');
+const callbackcatch = require('../utils/CallbackCatch');
+const CallbackCatch = require("../utils/CallbackCatch");
 
 class ShopController {
   ShopService;
@@ -18,14 +20,14 @@ class ShopController {
     return router;
   }
 
-  getAll = async (req, res) => {
+  getAll = callbackcatch(async (req, res) => {
     const { pageIndex, pageSize } = req.query;
     const shopList = await this.ShopService.find({ pageIndex, pageSize });
 
     res.send({ success: true, data: shopList });
-  };
+  });
 
-  getOne = async (req, res) => {
+  getOne = callbackcatch(async (req, res) => {
     const { shopId } = req.params;
     const shopList = await this.ShopService.find({ id: shopId });
 
@@ -34,9 +36,9 @@ class ShopController {
     } else {
       res.status(404).send({ success: false, data: null });
     }
-  };
+  });
 
-  put = async (req, res) => {
+  put = callbackcatch(async (req, res) => {
     const { shopId } = req.params;
     const { name } = req.query;
 
@@ -56,9 +58,9 @@ class ShopController {
     } else {
       res.status(404).send({ success: false, data: null });
     }
-  };
+  });
 
-  delete = async (req, res) => {
+  delete = callbackcatch(async (req, res) => {
     const { shopId } = req.params;
     const success = await this.ShopService.remove({ id: shopId });
 
@@ -66,9 +68,9 @@ class ShopController {
       res.status(404);
     }
     res.send({ success });
-  };
+  });
 
-  post = async (req, res) => {
+  post = callbackcatch(async (req, res) => {
     const { name } = req.body;
 
     try {
@@ -81,7 +83,7 @@ class ShopController {
     const shopInfo = await this.ShopService.create({ values: { name } });
 
     res.send({ success: true, data: shopInfo })
-  }
+  })
 }
 
 module.exports = async () => {
