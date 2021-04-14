@@ -1,4 +1,4 @@
-import './moulds/ShopForm.js';
+import "./moulds/ShopForm.js";
 const { createShopFormSchema } = window.moulds;
 
 export async function refreshShopList() {
@@ -17,7 +17,7 @@ export async function refreshShopList() {
   );
   document.querySelector("#root").innerHTML = `
   <h1>店铺列表</h1>
-  <ul class="shop-list">${htmlItems.join('')}</ul>
+  <ul class="shop-list">${htmlItems.join("")}</ul>
   <h1>店铺新增：</h1>
   <form method="post" action="/api/shop">
     <label>新店铺的名称：</label>
@@ -27,66 +27,64 @@ export async function refreshShopList() {
   </form>`;
 }
 
-
 export async function bindShopInfoEvents() {
-  document.querySelector('#root').addEventListener('click', async (e) => {
+  document.querySelector("#root").addEventListener("click", async (e) => {
     e.preventDefault();
     switch (e.target.dataset.type) {
       case "modify":
         await modifyShopInfo(e);
         break;
-      case 'remove':
+      case "remove":
         await removeShopInfo(e);
         break;
-      case 'create':
+      case "create":
         await createShopInfo(e);
         break;
     }
-  })
+  });
 }
 
 export async function createShopInfo(e) {
   e.preventDefault();
-  const name = e.target.parentElement.querySelector('input[name=name]').value;
+  const name = e.target.parentElement.querySelector("input[name=name]").value;
 
   try {
     await createShopFormSchema().validate({ name });
   } catch ({ message }) {
-    e.target.parentElement.querySelector('.error').innerHTML = message;
+    e.target.parentElement.querySelector(".error").innerHTML = message;
     return;
   }
 
-  await fetch('/api/shop', {
-    method: 'POST',
+  await fetch("/api/shop", {
+    method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
     body: `name=${encodeURIComponent(name)}`,
-  })
+  });
 
   await refreshShopList();
 }
 
 export async function modifyShopInfo(e) {
   const shopId = e.target.parentElement.dataset.shopId;
-  const name = e.target.parentElement.querySelector('input').value;
+  const name = e.target.parentElement.querySelector("input").value;
 
   try {
     await createShopFormSchema().validate({ name });
   } catch ({ message }) {
-    e.target.parentElement.querySelector('.error').innerHTML = message;
+    e.target.parentElement.querySelector(".error").innerHTML = message;
     return;
   }
 
-  await fetch(`/ api / shop / ${shopId}?name = ${encodeURIComponent(name)} `, {
-    method: 'PUT',
+  await fetch(`/api/shop/${shopId}?name=${encodeURIComponent(name)}`, {
+    method: "PUT",
   });
   await refreshShopList();
 }
 
-
 export async function removeShopInfo(e) {
   const shopId = e.target.parentElement.dataset.shopId;
-  await fetch(`/ api / shop / ${shopId} `, { method: 'DELETE' });
+  await fetch(`/api/shop/${shopId}`, { method: "DELETE" });
   await refreshShopList();
 }
